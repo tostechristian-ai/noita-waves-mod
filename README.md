@@ -16,7 +16,9 @@ This is a standard mod-folder installer. It does not inject code, patch Noita's 
 
 ### Manual install
 
-Copy the mod payload (`init.lua`, `mod.xml`, the two menu banner PNGs, `files/`, and `README.md`) into Noita's `mods/noita-arena-singleplayer` folder. Keep `mod.xml` directly inside that folder. The repository's `installer/`, `tests/`, and `LEGACY_AUDIT.md` are not part of the game mod payload.
+For the manual option, download `NoitaWaves-Mod.zip` from the [GitHub Releases](https://github.com/tostechristian-ai/noita-waves-mod/releases) page. Back up or remove any existing `mods/noita-arena-singleplayer` folder, then extract the ZIP contents directly into that folder. The archive is arranged so `mod.xml` is directly inside `mods/noita-arena-singleplayer`, alongside `init.lua`, the menu banner images, `README.md`, and `files/`.
+
+You can also install from source by copying those same mod files. Do not copy the repository's `installer/`, `tests/`, or `LEGACY_AUDIT.md` into the game mod folder. After extraction, enable **Noita Waves** in Noita's Mods menu and choose it from New Game.
 
 The mod uses vanilla game assets and does not require Noita Online or Noita Arena.
 
