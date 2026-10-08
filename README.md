@@ -10,6 +10,12 @@ Copy this repository's contents into Noita's `mods/noita-arena-singleplayer` fol
 
 Enable **Noita Waves** in Noita's Mods menu, then start a new game and choose **Noita Waves**. The mod uses vanilla game assets and does not require Noita Online or Noita Arena.
 
+### Windows installer
+
+For a guided install, download `NoitaWavesInstaller.exe` from the [GitHub Releases](https://github.com/tostechristian-ai/noita-waves-mod/releases) page and run it. Alternatively, download and extract `NoitaWaves-Installer.zip`, then double-click `Install-NoitaWaves.bat`. The installer detects common Steam library locations or lets you browse to the Noita folder. If an older `noita-arena-singleplayer` folder exists, it is preserved as a timestamped backup before the new files are installed.
+
+This is a standard mod-folder installer, not a game injector: it does not modify Noita's executable or game data. Once installed, enable the mod in Noita's Mods menu.
+
 ## Current Focus
 
 This prototype intentionally strips away the old spirit/AI ghost architecture and builds a clean wave-based arena loop instead.
