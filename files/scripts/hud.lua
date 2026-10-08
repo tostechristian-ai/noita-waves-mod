@@ -29,6 +29,10 @@ function arena_hud.draw()
             "ENEMIES " .. tostring(enemy_manager.count_alive_enemies(arena_state.enemies))
         )
         GuiText(arena_hud.gui, x, 56, "! TARGET  ARROWS = OFFSCREEN")
+        if arena_state.leash_notice_until and GameGetFrameNum() <= arena_state.leash_notice_until then
+            GuiColorSetForNextWidget(arena_hud.gui, 1, 0.8, 0.2, 1)
+            GuiText(arena_hud.gui, x, 68, "ENEMY RECOVERED")
+        end
         arena_hud.draw_enemy_markers(players and players[1], width, height)
     elseif arena_state.state == "preparing" then
         GuiText(arena_hud.gui, x, 44, "SPAWNING")
@@ -57,7 +61,7 @@ function arena_hud.draw()
             wave_manager.request_shop_skip()
         end
     elseif arena_state.state == "spawn_error" then
-        GuiText(arena_hud.gui, x, 44, "SPAWN ERROR")
+        GuiText(arena_hud.gui, x, 44, "WAVE SPAWN FAILED")
     elseif arena_state.state == "game_over" then
         GuiText(arena_hud.gui, x, 44, "GAME OVER")
     end

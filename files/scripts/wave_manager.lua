@@ -5,24 +5,14 @@ function wave_manager.start_wave(wave_number)
         return false
     end
 
-    local arena_x, arena_y = shop_manager.get_arena_player_spawn()
-    if not arena_x or not arena_y then
-        arena_x, arena_y = shop_manager.get_arena_location()
-        if arena_x and arena_y then
-            arena_x, arena_y = spawn_manager.get_free_position(arena_x, arena_y, 300, 300, 30)
-            print("Noita Waves: using fallback arena spawn after ground search failed")
-        end
-    end
+    shop_manager.select_arena_for_wave(wave_number)
+    local arena_x, arena_y = shop_manager.get_arena_location()
     local players = EntityGetWithTag("player_unit")
-    if not arena_x or not arena_y then
-        print("Noita Waves: arena location is unavailable; wave could not start")
-        arena_state.state = "spawn_error"
-        return false
-    end
-    if not players or not players[1] or not shop_manager.teleport_player(players[1], arena_x, arena_y) then
-        print("Noita Waves: could not teleport the player to the arena; wave could not start")
-        arena_state.state = "spawn_error"
-        return false
+    if players and players[1] then
+        if not arena_x or not arena_y then
+            arena_x, arena_y = EntityGetTransform(players[1])
+        end
+        shop_manager.teleport_player(players[1], arena_x, arena_y)
     end
 
     arena_state.round = wave_number
@@ -33,11 +23,14 @@ function wave_manager.start_wave(wave_number)
     for _, enemy_name in ipairs(enemy_manager.get_wave_enemies(wave_number)) do
         table.insert(arena_state.pending_spawns, { name = enemy_name, attempts = 0 })
     end
-    enemy_manager.clear_ambient_in_arena()
-    arena_state.ambient_cleanup_at = GameGetFrameNum() + 15
     arena_state.spawn_retry = 0
     arena_state.spawn_next_attempt = GameGetFrameNum() + 60
     arena_state.spawn_failure_shown = false
+    arena_state.arena_landing_resolved = false
+    arena_state.enemy_leash_state = {}
+    arena_state.leash_next_check = 0
+    arena_state.leash_notice_until = nil
+    arena_state.ambient_cleanup_next = 0
     arena_state.wave_enemies = #arena_state.pending_spawns
     arena_state.wave_kills = 0
     arena_state.last_enemy_count = 0
@@ -61,14 +54,26 @@ function wave_manager.update()
         return
     end
 
-    if arena_state.state == "preparing" then
-        if GameGetFrameNum() >= (arena_state.ambient_cleanup_at or 0) then
-            enemy_manager.clear_ambient_in_arena()
-            arena_state.ambient_cleanup_at = GameGetFrameNum() + 15
-        end
+    if arena_state.state == "preparing" or arena_state.state == "battle" then
+        enemy_manager.cleanup_ambient_near_arena()
+    end
 
+    if arena_state.state == "preparing" then
         if GameGetFrameNum() < arena_state.spawn_next_attempt then
             return
+        end
+
+        if not arena_state.arena_landing_resolved then
+            local players = EntityGetWithTag("player_unit")
+            local player = players and players[1]
+            if player and EntityGetIsAlive(player) then
+                shop_manager.finalize_arena_player_spawn(player)
+            end
+            arena_state.arena_landing_resolved = true
+            print(
+                "Noita Waves: loading selected arena terrain completed; wave mobs will use arena center "
+                    .. tostring(arena_state.arena_x) .. ", " .. tostring(arena_state.arena_y)
+            )
         end
 
         local spawned, missing, failed = enemy_manager.spawn_missing(
@@ -122,12 +127,9 @@ function wave_manager.update()
         return
     end
 
-    if GameGetFrameNum() >= (arena_state.ambient_cleanup_at or 0) then
-        enemy_manager.clear_ambient_in_arena()
-        arena_state.ambient_cleanup_at = GameGetFrameNum() + 15
-    end
-
     local remaining_enemies = enemy_manager.count_alive_enemies(arena_state.enemies)
+    local players = EntityGetWithTag("player_unit")
+    enemy_manager.update_leash(arena_state.enemies, players and players[1])
     local killed = math.max(0, (arena_state.last_enemy_count or remaining_enemies) - remaining_enemies)
     if killed > 0 then
         arena_state.kills = (arena_state.kills or 0) + killed
@@ -136,7 +138,6 @@ function wave_manager.update()
     end
 
     if remaining_enemies <= 0 then
-        local players = EntityGetWithTag("player_unit")
         local player = players and players[1]
         if not player then
             return
@@ -146,15 +147,14 @@ function wave_manager.update()
         local next_round = completed_round + 1
         local reward = shop_manager.award_wave_gold(player, completed_round)
         local moved_to_lower_floor = shop_manager.advance_tower_floor(completed_round)
-        local shop_x, shop_y = shop_manager.get_shop_location()
 
         arena_state.state = "shop"
         arena_state.next_round = next_round
         arena_state.shop_started_at = GameGetFrameNum()
         arena_state.shop_skip_requested = false
-        if shop_manager.teleport_player(player, shop_x, shop_y) then
-            shop_manager.refresh_tower_supplies("round_" .. tostring(next_round), shop_x, shop_y)
-        end
+        local shop_x, shop_y = shop_manager.get_shop_location()
+        shop_manager.teleport_player_to_shop(player)
+        shop_manager.refresh_tower_supplies("round_" .. tostring(next_round), shop_x, shop_y)
 
         if moved_to_lower_floor then
             GamePrintImportant(

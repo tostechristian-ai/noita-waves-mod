@@ -18,9 +18,20 @@ try {
     }
 
     [System.IO.Directory]::CreateDirectory($payloadDirectory) | Out-Null
-    Get-ChildItem -LiteralPath $repositoryRoot -Force |
-        Where-Object { $_.Name -notin @(".git", "installer") } |
-        Copy-Item -Destination $payloadDirectory -Recurse -Force
+    foreach ($item in @(
+        "init.lua",
+        "mod.xml",
+        "menu_banner_background.png",
+        "menu_banner_overlay.png",
+        "README.md",
+        "files"
+    )) {
+        $source = Join-Path $repositoryRoot $item
+        if (-not (Test-Path -LiteralPath $source)) {
+            throw "Required mod payload item was not found: $item"
+        }
+        Copy-Item -LiteralPath $source -Destination $payloadDirectory -Recurse -Force
+    }
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot "Install-NoitaWaves.ps1") -Destination $packageRoot
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot "Install-NoitaWaves.bat") -Destination $packageRoot
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot "README.txt") -Destination $packageRoot

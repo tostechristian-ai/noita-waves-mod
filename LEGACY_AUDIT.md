@@ -24,9 +24,9 @@ Noita mod callbacks → init.lua
 game_manager.lua → arena_manager.lua
 arena_manager.lua → wave_manager.lua
 wave_manager.lua → enemy_manager.lua
-enemy_manager.lua → spawn_manager.lua → terrain-adjusted offsets near the saved surface spawn
+enemy_manager.lua → spawn_manager.lua → inset camera-edge terrain candidates, then fixed-offset placement
 enemy_manager.lua → vanilla data/entities/animals/*.xml
-shop_manager.lua → spawn_manager.lua → terrain lookup for the combat-field landing point
+shop_manager.lua → spawn_manager.lua → arena terrain search with raw-coordinate fallback; fixed tower-floor teleports
 game_manager.lua → vanilla data/entities/items/wand_level_01.xml
 hud.lua → on-screen markers for live entities tracked by the current wave
 
@@ -43,14 +43,14 @@ The separate multiplayer Arena mod was identified as the source of the Noita Onl
 
 ## Findings
 
-- The player starts at the first Holy Mountain shop with $200 and a basic wand. A HUD countdown delays wave one by 1 minute. The combat field is 800 world units left of the original player spawn, with its ground reference shifted 100 units down. Before each fight, player placement checks nearby ground candidates and headroom, then starts above the surface. Enemy spawn points are randomized within 300 world units of the arena center and use the saved above-ground reference. Between waves, the player returns to the active Holy Mountain floor; every five cleared waves advances one floor through six known depths, then remains at the lowest.
+- The player starts at the first Holy Mountain shop with $200 and a basic wand. A HUD countdown delays wave one by 1 minute. Each wave selects one of five fixed overworld X candidates in shuffled order without immediately repeating the prior candidate; its estimated Y is resolved after loading the area. Player placement tries nearby terrain-adjusted positions and falls back to the selected arena coordinate. Mobs try standable terrain in inset camera-edge bands, then retain the original fixed terrain-adjusted/raw offsets as fallback; neither failed search blocks wave start or entity creation. Tower transitions continue to use their original fixed floor coordinates. Between waves, every five cleared waves advances one floor through six known depths, then remains at the lowest.
 - Each wave begins only after a short world-load delay. Enemy IDs are tracked per wave; only those living entities affect completion. Failed loads retry up to five times and then stop in a visible spawn-error state instead of awarding a false clear.
-- HUD markers follow only the tracked live entities from the current wave. Visible targets receive a high-contrast `!`; off-screen targets receive a directional arrow pinned to the screen edge. Nearby non-wave `enemy` and `prey` entities are removed from the arena during wave preparation and combat, while tracked wave entities and the rest of the world are preserved.
+- HUD markers follow only the tracked live entities from the current wave. Visible targets receive a high-contrast `!`; off-screen targets receive a directional arrow pinned to the screen edge. A soft leash checks tracked wave enemies every 30 frames and, after three seconds beyond the player/arena limits, attempts a separated recovery near the player with a ten-second per-enemy cooldown. Bounded ambient cleanup checks within 700 world units of the selected arena every 120 frames and removes only unprotected root entities tagged `enemy` with animal AI and a damage model.
 - The initial 1-minute countdown and each 1-minute tower intermission have a clickable HUD button to shorten the existing timer to one second remaining.
 - Clearing a wave awards gold and returns the player to the tower supplies for the timed intermission; the automatic timer remains the fallback.
 - The mode does not generate duplicate shop offers. Additional temple/tower items are provided by separately enabled shop/content mods.
 - At run start and after every cleared wave, the player receives a newly spawned random perk, full-health pickup, and spell refresh at the current tower floor, including after descending. Tagged mod-created supplies are replaced at the next visit; repeated refresh requests for the same transition are ignored, and supplies remain available throughout the timed break.
-- During wave preparation and combat, the wave manager asks `enemy_manager.lua` to remove nearby non-wave `enemy` and `prey` entities and filename-matched mammoth entities inside the 400-unit arena radius every 15 frames. Wave-tracked entities are excluded; other parts of the world are untouched.
+- Arbitrary terrain/map overhauls can still make the terrain-adjusted location unsuitable. This mode deliberately attempts the original/fallback coordinate instead of blocking the teleport or wave, allowing visual debugging. Ambient entities may remain in the combat area because removing unrelated world content would be destructive.
 - `game_manager.lua` grants one vanilla level-1 wand, one randomly filled vanilla potion, and one empty potion at run start, retrying if the player is not ready when first requested.
 - `hud.lua` displays wave number, enemy count, total kills, gold, and remaining shop time. Player death shows the reached wave/kill count and enters Noita's native game-over flow.
 - The deleted HUD and build generator were never loaded or called. The spirit entity/AI pair was likewise disconnected from the active wave loop.

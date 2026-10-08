@@ -61,8 +61,7 @@ function game_manager.begin_new_run(player)
     game_manager.set_starting_gold(player, 200)
 
     shop_manager.clear_legacy_stock()
-    local shop_x, shop_y = shop_manager.get_shop_location()
-    if shop_manager.teleport_player(player, shop_x, shop_y) then
+    if shop_manager.teleport_player_to_shop(player) then
         shop_manager.refresh_tower_supplies("run_start")
     end
     GamePrintImportant("Arena", "First round starts in 1 minute. Starting cash: $200.")
