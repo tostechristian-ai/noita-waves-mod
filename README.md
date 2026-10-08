@@ -2,7 +2,7 @@
 
 A standalone single-player arena survival mode for Noita.
 
-**Current release: `v0.1.0-alpha.3` (pre-release).** This update adds rotating overworld arenas, safer local ambient cleanup, wave-enemy recovery, and a more varied, bounded wave roster. Gameplay and compatibility may change during alpha development.
+**Current release: `v0.1.0-alpha.4` (pre-release).** This release refreshes the documentation and Windows installer for the current arena rotation, bounded ambient cleanup, wave-enemy recovery, and expanded wave roster. Gameplay and compatibility may change during alpha development.
 
 ## Installation
 
@@ -23,7 +23,7 @@ The mod uses vanilla game assets and does not require Noita Online or Noita Aren
 - Start at the first Holy Mountain shop with a basic wand, a random full potion, an empty potion, and $200.
 - Prepare for one minute before wave 1; use the on-screen button to start early.
 - Five fixed overworld arena candidates rotate in a shuffled order without repeating the same location consecutively. Terrain is loaded before a best-effort clear landing position is resolved; mobs use that wave's resolved arena center.
-- Waves 1-10 introduce vanilla enemy types gradually, with no more than 10 enemies per wave. Later waves use a capped endless mix with bounded upgrades.
+- Waves 1-10 introduce vanilla enemy types gradually: rats and ants appear early, followed by zombies and acid shooters, then shotgunner, sniper, and shaman; wave 10 includes one `wand_ghost`. No wave exceeds 10 enemies. Later waves use a capped endless mix with bounded upgrades.
 - Enemy health scales smoothly after wave 5, up to a 1.5x cap, while preserving each enemy's native health fraction and respecting its native maximum-health cap.
 - Tracked wave enemies receive a bright `!` marker; off-screen enemies get a directional edge marker.
 - During preparation and combat, cleanup checks only within 700 world units of the selected arena and only removes ordinary root enemy entities with animal AI and a damage model. It protects wave enemies, the player, interactable entities, and tagged NPC/shopkeeper/boss categories. Unusual modded enemies outside this filter may remain.
@@ -44,6 +44,8 @@ The mod uses vanilla game assets and does not require Noita Online or Noita Aren
 This is a self-contained Noita mod, not a Noita Together or multiplayer mode. It uses vanilla enemies and the Holy Mountain shop, and does not depend on Noita Online or Noita Arena. Each completed wave awards $200 plus $100 for every additional wave. The mod's three arena supplies are separate tagged pickups and do not duplicate the temple's normal shop offers. Other temple/tower stock comes from separately enabled mods.
 
 Arena X coordinates are candidate estimates, not guaranteed clear landing spots. Noita world generation and other map mods can change terrain; if the terrain search cannot find a suitable position, the mod uses its non-blocking coordinate fallback. Locations, spawn attempts, and leash recoveries are logged. Mods that replace vanilla enemy files can change wave behavior. Failed enemy loads are retried and then shown as a spawn error instead of awarding a false victory.
+
+The five candidate X coordinates are `-14000`, `-9000`, `4000`, `7000`, and `12000`; they are shuffled without immediately repeating the prior candidate. The roster references base-game entity paths, including the newer wave types listed above. Static checks cover roster and wave-manager contracts, but enemy loading and the generated level-3 wand behavior have not been verified in an in-game run; other mods may also replace or alter those entities.
 
 During combat, nearby ordinary ambient enemies may be removed inside the bounded arena cleanup radius. The cleanup does not scan or remove enemies elsewhere in the world. The run ends on player death and returns to Noita's game-over flow.
 

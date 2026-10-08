@@ -1,8 +1,8 @@
-Noita Waves Installer - v0.1.0-alpha.3
+Noita Waves Installer - v0.1.0-alpha.4
 
 Run NoitaWavesInstaller.exe, or double-click Install-NoitaWaves.bat if using the ZIP package. Choose your Noita game folder if it is not detected automatically, then click Install Noita Waves.
 
-The installer copies the same Noita Waves v0.1.0-alpha.3 game-mod payload into:
+The installer copies the same Noita Waves v0.1.0-alpha.4 game-mod payload into:
   <Noita game folder>\mods\noita-arena-singleplayer
 
 It does not inject code into Noita, patch game files, or enable the mod automatically. After installation, start Noita, enable Noita Waves in the Mods menu, and choose it from New Game.

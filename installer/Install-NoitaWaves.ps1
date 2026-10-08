@@ -89,7 +89,7 @@ function Get-NoitaInstallCandidates {
 }
 
 $form = New-Object System.Windows.Forms.Form
-$form.Text = "Noita Waves Installer v0.1.0-alpha.3"
+$form.Text = "Noita Waves Installer v0.1.0-alpha.4"
 $form.ClientSize = New-Object System.Drawing.Size(570, 205)
 $form.FormBorderStyle = [System.Windows.Forms.FormBorderStyle]::FixedDialog
 $form.MaximizeBox = $false
@@ -193,7 +193,7 @@ $installButton.Add_Click({
             throw
         }
 
-        $message = "Noita Waves v0.1.0-alpha.3 is installed.`r`n`r`nStart Noita, enable Noita Waves in the Mods menu, and choose it from New Game."
+        $message = "Noita Waves v0.1.0-alpha.4 is installed.`r`n`r`nStart Noita, enable Noita Waves in the Mods menu, and choose it from New Game."
         if ($backup) {
             $message += "`r`n`r`nYour previous mod folder was preserved at:`r`n$backup"
         }
