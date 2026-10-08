@@ -62,6 +62,10 @@ function Get-NoitaInstallCandidates {
     }
 
     foreach ($steamRoot in $steamRoots) {
+        if (-not (Test-Path -LiteralPath $steamRoot -PathType Container)) {
+            continue
+        }
+
         $libraryFile = Join-Path $steamRoot "steamapps\libraryfolders.vdf"
         $libraries = New-Object 'System.Collections.Generic.List[string]'
         $libraries.Add($steamRoot)
@@ -76,6 +80,9 @@ function Get-NoitaInstallCandidates {
         }
 
         foreach ($library in $libraries) {
+            if (-not (Test-Path -LiteralPath $library -PathType Container)) {
+                continue
+            }
             $candidates.Add((Join-Path $library "steamapps\common\Noita"))
         }
     }
@@ -89,7 +96,7 @@ function Get-NoitaInstallCandidates {
 }
 
 $form = New-Object System.Windows.Forms.Form
-$form.Text = "Noita Waves Installer v0.1.0-alpha.4"
+$form.Text = "Noita Waves Installer v0.1.0-alpha.5"
 $form.ClientSize = New-Object System.Drawing.Size(570, 205)
 $form.FormBorderStyle = [System.Windows.Forms.FormBorderStyle]::FixedDialog
 $form.MaximizeBox = $false
@@ -193,7 +200,7 @@ $installButton.Add_Click({
             throw
         }
 
-        $message = "Noita Waves v0.1.0-alpha.4 is installed.`r`n`r`nStart Noita, enable Noita Waves in the Mods menu, and choose it from New Game."
+        $message = "Noita Waves v0.1.0-alpha.5 is installed.`r`n`r`nStart Noita, enable Noita Waves in the Mods menu, and choose it from New Game."
         if ($backup) {
             $message += "`r`n`r`nYour previous mod folder was preserved at:`r`n$backup"
         }

@@ -89,7 +89,7 @@ try {
         "FinishMessage="
         "TargetName=$exeFullPath"
         "FriendlyName=Noita Waves Mod Installer"
-        "AppLaunched=Install-NoitaWaves.bat"
+        "AppLaunched=powershell.exe -NoProfile -ExecutionPolicy Bypass -STA -WindowStyle Hidden -File Install-NoitaWaves.ps1"
         "PostInstallCmd=<None>"
         "AdminQuietInstCmd="
         "UserQuietInstCmd="

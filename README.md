@@ -2,13 +2,15 @@
 
 A standalone single-player arena survival mode for Noita.
 
-**Current release: `v0.1.0-alpha.4` (pre-release).** This release refreshes the documentation and Windows installer for the current arena rotation, bounded ambient cleanup, wave-enemy recovery, and expanded wave roster. Gameplay and compatibility may change during alpha development.
+**Current release: `v0.1.0-alpha.5` (pre-release).** Fixes the Windows EXE installer launch command so IExpress starts the bundled PowerShell installer directly rather than invoking the batch wrapper through Command.com. Gameplay and compatibility may change during alpha development.
 
 ## Installation
 
 ### Windows installer
 
 Download `NoitaWavesInstaller.exe` from the [GitHub Releases](https://github.com/tostechristian-ai/noita-waves-mod/releases) page and run it. The installer detects common Steam library locations or lets you browse to the Noita game folder. Alternatively, download and extract `NoitaWaves-Installer.zip`, then run `Install-NoitaWaves.bat`. Both install the same mod payload into `mods\noita-arena-singleplayer`; an existing folder is moved to a timestamped backup before replacement.
+
+The EXE runs its bundled PowerShell installer directly; the ZIP's batch launcher remains available as a fallback.
 
 This is a standard mod-folder installer. It does not inject code, patch Noita's executable or game data, or enable the mod automatically. After installation, enable **Noita Waves** in Noita's Mods menu and choose it from New Game.
 
