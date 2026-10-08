@@ -1,0 +1,14 @@
+<Mod
+	name="Noita Waves"
+	description="Standalone single-player wave survival mode for Noita."
+	request_no_api_restrictions="0"
+	is_game_mode="1"
+	is_translation="0"
+	ui_newgame_name="Noita Waves"
+	ui_newgame_description="Survive escalating waves of Noita enemies."
+	ui_newgame_gfx_banner_bg="mods/noita-arena-singleplayer/menu_banner_background.png"
+	ui_newgame_gfx_banner_fg="mods/noita-arena-singleplayer/menu_banner_overlay.png"
+	translation_xml_path=""
+	translation_csv_path=""
+>
+</Mod>
